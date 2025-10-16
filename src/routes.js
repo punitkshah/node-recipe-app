@@ -40,4 +40,20 @@ router.post('/recipes/:id/edit', async (req, res) => {
 	res.redirect(`/recipes/${recipeId}`)
 })
 
+router.get('/recipes/random', async (req, res) => {
+	const db = await getDbConnection()
+	const countResult = await db.get('SELECT COUNT(*) as count FROM recipes')
+	const count = countResult.count
+	if (count === 0) {
+		return res.render('recipe', { recipe: null })
+	}
+	const randomIndex = Math.floor(Math.random() * count)
+	const recipe = await db.get('SELECT * FROM recipes LIMIT 1 OFFSET ?', [randomIndex])
+	res.render('recipe', { recipe })
+})
+	const randomIndex = Math.floor(Math.random() * recipes.length)
+	const recipe = recipes[randomIndex]
+	res.render('recipe', { recipe })
+})
+
 module.exports = router
